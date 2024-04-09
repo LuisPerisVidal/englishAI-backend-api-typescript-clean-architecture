@@ -1,0 +1,20 @@
+stages:
+ - upload
+
+uploadmain:
+  image: google/cloud-sdk:slim
+  stage: upload
+  only:
+    - main
+  script:
+    - mkdir src/credentials
+    - echo $OPEN_AI > ./src/credentials/openai.json
+    - echo $SERVICE_ACCOUNT > ./src/credentials/firestore.json
+    - apt-get update
+    - apt-get install -y nodejs npm
+    - npm install
+    - npm run build
+    - echo $SERVICE_ACCOUNT > /tmp/$CI_PIPELINE_ID.json
+    - gcloud auth activate-service-account --key-file /tmp/$CI_PIPELINE_ID.json
+    - gcloud run deploy production-api --project $PROJECT_ID --region europe-west1 --allow-unauthenticated --source .
+
