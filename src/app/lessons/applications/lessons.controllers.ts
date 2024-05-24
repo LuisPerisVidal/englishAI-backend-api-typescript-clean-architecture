@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Lesson } from '../domain/lesson.interface';
-import { validateTenses } from '../domain/tenses.domain';
+import LessonDomain from '../domain/lesson.domain';
 
 class Lessons{
 
@@ -12,7 +12,7 @@ class Lessons{
 		try {
 
 			const topic = req.body.topic;
-			const validTenses = validateTenses(req.body.tenses);
+			const validTenses = LessonDomain.validateTenses(req.body.tenses);
 	
 			if( typeof topic !== 'string' || topic.length === 0 || topic.length > 40 || validTenses.length === 0 ){
 				throw new Error("Invalid topic or tenses");
@@ -22,15 +22,10 @@ class Lessons{
 	
 			if(ai_response){
 	
-				const lesson: Lesson = {
-					lesson: ai_response,
-					tenses: validTenses,
-					topic: topic,
-					created: new Date()
-				};
+				const lesson: Lesson = new LessonDomain(ai_response, validTenses, topic);
 	
 				const id = await this.db.lessons.saveLesson(lesson);
-	
+
 				return res.json({status: true, lesson, id: id});
 			}
 	
@@ -38,6 +33,7 @@ class Lessons{
 			
 
 		} catch (error) {
+			console.log(error);
 			return res.json({status: false});
 		}
 

@@ -7,7 +7,8 @@ import sitemapController from '../applications/sitemap.controllers';
 
 const Router = express.Router();
 
-	Router.get('/', sitemapController.sitemap.bind({ firestore: {sitemap: sitemapFirestore} }));
+	Router.get('/', sitemapController.sitemapTenses.bind({ firestore: {sitemap: sitemapFirestore} }));
+	Router.get('/modals', sitemapController.sitemapModals.bind({ firestore: {sitemap: sitemapFirestore} }));
 
 
 

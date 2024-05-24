@@ -5,7 +5,7 @@ class Lessons{
 
 	async saveLesson(lesson: Lesson){
 
-		  const data = await Connection.collection("lessons").add(lesson);
+		  const data = await Connection.collection("lessons").add({...lesson});
 		  return data.id;
 	}
 
